@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: BSD-3-Clause
+---
+# First, run the upgrade playbook
+- import_playbook: "../playbooks/upgrade.yml"
+
+# Then, verify the result
+- name: Verify upgrade success
+  hosts: all
+  gather_facts: false
+  become: true
+
+  tasks:
+    - name: Gather distribution facts
+      setup:
+        gather_subset:
+          - distribution
+          - distribution_version
+          - distribution_major_version
+
+    - name: Assert that the system is upgraded to RHEL 8
+      assert:
+        that:
+          - ansible_distribution == "RedHat"
+          - ansible_distribution_major_version | int == 8
+        fail_msg: "System upgrade failed: Expected RHEL 8, got {{ ansible_distribution }} {{ ansible_distribution_version }}"
+

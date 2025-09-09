@@ -1,0 +1,20 @@
+- name: my play
+  hosts: all
+  become: true
+
+- name: leapp-upgrade | Include upgrade role for pre-upgrade setup
+  include_role:
+    name: upgrade
+
+- name: leapp-upgrade | Check that leapp is installed
+  ansible.builtin.command: which leapp
+  register: leapp_check
+  changed_when: false
+  failed_when: false
+
+- name: leapp-upgrade | Assert that leapp is installed
+  ansible.builtin.assert:
+    that:
+      - leapp_check.rc == 0
+    msg: "Leapp is not installed or not in PATH. Please install it manually (e.g., 'dnf install leapp')."
+

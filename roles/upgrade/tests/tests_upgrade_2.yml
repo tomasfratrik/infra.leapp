@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: BSD-3-Clause
+---
+- name: Test full system upgrade role
+  hosts: all
+  gather_facts: true
+  become: true
+
+  roles:
+    - role: upgrade
+
+  tasks:
+    - name: Print system version BEFORE upgrade
+      debug:
+        msg: "Before upgrade: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+
+    - name: Gather facts after upgrade
+      setup:
+      register: post_facts
+
+    - name: Print system version AFTER upgrade
+      debug:
+        msg: "After upgrade: {{ post_facts.ansible_facts.ansible_distribution }} {{ post_facts.ansible_facts.ansible_distribution_version }}"
+

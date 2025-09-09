@@ -1,0 +1,22 @@
+# SPDX-License-Identifier: BSD-3-Clause
+---
+- name: Mocked smoke test
+  hosts: all
+  gather_facts: false
+  become: false
+
+  tasks:
+    - name: Print a test message
+      ansible.builtin.debug:
+        msg: "This is a mocked playbook test. It should always pass."
+
+    - name: Set a dummy fact
+      ansible.builtin.set_fact:
+        dummy_value: 42
+
+    - name: Assert that the dummy fact is correct
+      ansible.builtin.assert:
+        that:
+          - dummy_value == 42
+        msg: "Dummy fact assertion failed!"
+

@@ -1,4 +1,11 @@
 ---
+- name: leapp-upgrade | Ensure Leapp packages are installed
+  ansible.builtin.dnf:
+    name:
+      - leapp
+      - leapp-deps
+      - python3-leapp
+    state: present
 - name: leapp-upgrade | Include the parse_leapp_report role to check for inhibitors
   ansible.builtin.include_role:
     name: infra.leapp.parse_leapp_report

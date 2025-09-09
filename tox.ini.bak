@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: MIT
+[tox]
+envlist = qemu-ansible-core-2.14
+
+[lsr_config]
+lsr_enable = true
+
+[testenv]
+basepython = python3
+setenv =
+    ANSIBLE_STDOUT_CALLBACK = yaml
+    ANSIBLE_ROLES_PATH = {toxinidir}/roles
+    ANSIBLE_COLLECTIONS_PATHS = {toxinidir}
+passenv = *
+deps =
+    tox-lsr
+commands =
+    {posargs}
+
+[testenv:qemu-ansible-core-2.14]
+description = Run Ansible integration tests with qemu and ansible-core 2.14
+allowlist_externals =
+    pytest
+commands =
+    pytest -v {posargs}
+
