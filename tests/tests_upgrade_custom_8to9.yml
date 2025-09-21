@@ -1,0 +1,128 @@
+- name: Test
+  hosts: all
+  vars:
+    leapp_upgrade_type: custom
+    #leapp_upgrade_opts: "--target 9.6 --no-rhsm"
+    leapp_upgrade_opts: "--no-rhsm"
+    local_repos_pre_leapp:
+      - name: rhel-8-for-x86_64-baseos-rpms
+        description: BaseOS for x86_64
+        baseurl: http://download.eng.brq.redhat.com/rhel-8/nightly/RHEL-8/latest-RHEL-8.10/compose/BaseOS/x86_64/os/
+        state: present
+      - name: rhel-8-for-x86_64-appstream-rpms
+        description: AppStream for x86_64
+        baseurl: http://download.eng.brq.redhat.com/rhel-8/nightly/RHEL-8/latest-RHEL-8.10/compose/AppStream/x86_64/os/
+        state: present
+    local_repos_leapp:
+      - name: rhel-9-for-x86_64-baseos-rpms
+        description: BaseOS for x86_64
+        baseurl: http://download.eng.brq.redhat.com/rhel-9/nightly/RHEL-9/latest-RHEL-9.6/compose/BaseOS/x86_64/os/
+        file: /etc/leapp/files/leapp_upgrade_repositories
+        state: present
+      - name: rhel-9-for-x86_64-appstream-rpms
+        description: AppStream for x86_64
+        baseurl: http://download.eng.brq.redhat.com/rhel-9/nightly/RHEL-9/latest-RHEL-9.6/compose/AppStream/x86_64/os/
+        file: /etc/leapp/files/leapp_upgrade_repositories
+        state: present
+    title_map:
+      "Use of CIFS detected. Upgrade can't proceed": leapp_cifs_detected
+      "Detected a corrupted grubenv file": leapp_corrupted_grubenv_file
+      "custom network-scripts detected. RHEL 9 does not support the legacy network-scripts package that was deprecated in RHEL 8": leapp_custom_network_scripts_detected
+      "A deprecated directive in the sshd configuration": leapp_deprecated_sshd_directive
+      "Firewalld Configuration AllowZoneDrifting Is Unsupported": leapp_firewalld_allowzonedrifting
+      "Firewalld Service tftp-client Is Unsupported": leapp_firewalld_unsupported_tftp_client
+      "Leapp detected loaded kernel drivers which have been removed in RHEL 8. Upgrade cannot proceed": leapp_loaded_removed_kernel_drivers
+      "efibootmgr package is required on EFI systems": leapp_missing_efibootmgr
+      "Leapp detected missing packages": leapp_missing_pkg
+      "Required DNF plugins are not being loaded.": leapp_missing_yum_plugins
+      "Multiple kernels installed": leapp_multiple_kernels
+      "Newest installed kernel not in use": leapp_newest_kernel_not_in_use
+      "Use of NFS detected. Upgrade can't proceed": leapp_nfs_detected
+      "Detected partitions mounted in a non-persistent fashion, preventing a successful in-place upgrade": leapp_non_persistent_partitions
+      "Non-standard configuration of openssl.cnf": leapp_non_standard_openssl_config
+      "Old PostgreSQL data found in `/var/lib/pgsql/data`": leapp_old_postgresql_data
+      "The pam_tally2 pam module(s) no longer available": leapp_pam_tally2
+      "Detected partitions mounted with the `noexec` option, preventing a successful in-place upgrade": leapp_partitions_with_noexec
+      "Upgrade requires links in root directory to be relative": leapp_relative_symlinks
+      "Possible problems with remote login using root account": leapp_remote_using_root
+      "Detected RPMs with RSA/SHA1 signature": leapp_rpms_with_rsa_sha1_detected
+      "The installed KDE environment is unavailable on RHEL 8": leapp_unavailable_kde
+      "Cannot perform the VDO check of block devices": leapp_vdo_check_needed
+    leapp_answerfile: |
+      [remove_pam_pkcs11_module_check]
+      confirm = True
+  tasks:
+      - name: Remove outdated minute RHEL repositories before upgrade
+        ansible.builtin.file:
+          path: "{{ item }}"
+          state: absent
+        loop:
+          - /etc/yum.repos.d/rhel.repo
+          - /etc/yum.repos.d/rhel-updates.repo
+
+
+      - name: Run first analysis
+        ansible.builtin.include_role:
+          name: infra.leapp.analysis
+
+      - name: Flush handlers
+        meta: flush_handlers
+
+      - name: Show all inhibitors collected by analysis
+        debug:
+          var: leapp_inhibitors
+
+      - name: Extract inhibitor titles
+        set_fact:
+          inhibitor_titles: "{{ leapp_inhibitors | map(attribute='title') | list }}"
+
+      - name: Initialize remediation_todo
+        set_fact:
+          remediation_todo: []
+
+      - name: Map inhibitors to remediation_todo
+        set_fact:
+          remediation_todo: "{{ remediation_todo + [title_map[map_key]] }}"
+        loop: "{{ inhibitor_titles }}"
+        loop_control:
+          loop_var: inhibitor_title
+        vars:
+          map_key: "{{ title_map.keys() | select('in', inhibitor_title) | first | default('') }}"
+        when: map_key != ''
+
+      - name: Debug remediation_todo
+        debug:
+          var: remediation_todo
+
+      - name: Run remediation
+        ansible.builtin.include_role:
+          name: infra.leapp.remediate
+
+      - name: Flush handlers
+        meta: flush_handlers
+
+      - name: Reinstall linux-firmware via dnf
+        ansible.builtin.command: dnf remove -y linux-firmware
+
+      - name: Reinstall linux-firmware via dnf
+        ansible.builtin.command: dnf install -y linux-firmware
+
+      - name: Run analysis after remediation
+        ansible.builtin.include_role:
+          name: infra.leapp.analysis
+
+      - name: Flush handlers
+        meta: flush_handlers
+
+      - name: Run upgrade role
+        ansible.builtin.include_role:
+          name: infra.leapp.upgrade
+
+      - name: Assert that the system has been upgraded to RHEL 9
+        ansible.builtin.assert:
+          that:
+            - ansible_distribution == "RedHat"
+            - ansible_distribution_major_version == "9"
+          fail_msg: "System was not upgraded to RHEL 9. Current OS: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+          success_msg: "System successfully upgraded to RHEL 9"
+
