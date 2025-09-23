@@ -1,3 +1,4 @@
+---
 - name: Test
   hosts: all
   vars:
@@ -125,4 +126,4 @@
             - ansible_distribution_major_version == "9"
           fail_msg: "System was not upgraded to RHEL 9. Current OS: {{ ansible_distribution }} {{ ansible_distribution_version }}"
           success_msg: "System successfully upgraded to RHEL 9"
-
+...
