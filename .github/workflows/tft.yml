@@ -92,6 +92,7 @@ jobs:
             if yq '.galaxy_info.galaxy_tags[]' "$meta_main" | grep -qi el"$ver"; then
               supported_platforms+=" CentOS-Stream-$ver"
               supported_platforms+=" RHEL-$ver"
+              supported_platforms+=" RHEL-8.10.0-Nightly"
             fi
           done
           echo "supported_platforms=$supported_platforms" >> $GITHUB_OUTPUT
