@@ -4,9 +4,6 @@ on:
   issue_comment:
     types:
       - created
-  pull_request:
-    types:
-      - opened
 permissions:
   contents: read
   # This is required for the ability to create/update the Pull request status
