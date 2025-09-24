@@ -76,6 +76,7 @@ jobs:
 
       - name: Get supported platforms
         id: supported_platforms
+
         run: |
           supported_platforms=""
           meta_main=meta/main.yml
@@ -102,6 +103,9 @@ jobs:
             fi
           done
           echo "supported_platforms=$supported_platforms" >> $GITHUB_OUTPUT
+      - name: Print supported platforms
+        run: echo "supported_platforms=${{ steps.supported_platforms.outputs.supported_platforms }}"
+
 
   testing-farm:
     name: ${{ matrix.platform }}/ansible-${{ matrix.ansible_version }}
