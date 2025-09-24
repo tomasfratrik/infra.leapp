@@ -153,6 +153,18 @@ jobs:
           description: The role does not support this platform. Skipping.
           targetUrl: ""
 
+      - name: Check TF_API_KEY_RH
+        run: |
+          if [ -z "$TF_API_KEY_RH" ]; then
+            echo "TF_API_KEY_RH is empty"
+          else
+            echo "TF_API_KEY_RH is set"
+          fi
+        env: 
+          TF_API_KEY_RH: ${{ secrets.TF_API_KEY_RH }}
+
+
+
       - name: Run test in testing farm
         uses: sclorg/testing-farm-as-github-action@v4
         if: contains(needs.prepare_vars.outputs.supported_platforms, matrix.platform)
@@ -180,6 +192,7 @@ jobs:
           api_key: ${{ secrets.TF_API_KEY_RH }}
           update_pull_request_status: false
           tmt_plan_filter: "tag:playbooks_parallel,ssh"
+
 
       - name: Set final commit status
         uses: myrotvorets/set-commit-status-action@master
