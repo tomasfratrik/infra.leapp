@@ -12,6 +12,12 @@ permissions:
   # This is required for the ability to create/update the Pull request status
   statuses: write
 jobs:
+  debug_event:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump github context
+        run: echo '${{ toJson(github) }}'
+
   prepare_vars:
     name: Get info from role and PR to determine if and how to test
     # The concurrency key is used to prevent multiple workflows from running at the same time
