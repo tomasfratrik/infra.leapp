@@ -41,6 +41,15 @@
 - name: Flush handlers
   meta: flush_handlers
 
+- name: Reinstall linux-firmware via dnf (remove)
+  ansible.builtin.command: dnf remove -y linux-firmware
+
+- name: Reinstall linux-firmware via dnf (install)
+  ansible.builtin.command: dnf install -y linux-firmware
+
+- name: Flush handlers
+  meta: flush_handlers
+
 - name: Run analysis after remediation
   ansible.builtin.include_role:
     name: infra.leapp.analysis
