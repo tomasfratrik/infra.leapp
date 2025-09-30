@@ -111,7 +111,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: RHEL-8.10.0-Nightly
+          # - platform: RHEL-8.10.0-Nightly
+          #   ansible_version: 2.16
+          - platform: RHEL-8.10.0-20240516.14
             ansible_version: 2.16
     runs-on: ubuntu-latest
     env:
