@@ -29,6 +29,12 @@
     title_map: "{{ common_title_map }}"
     leapp_answerfile: "{{ common_leapp_answerfile }}"
   tasks:
+    - name: Skip test if not RHEL 9
+      ansible.builtin.meta: end_play
+      when: |
+        ansible_distribution != "RedHat" or
+        ansible_distribution_major_version != "9"
+
     - name: Include common upgrade tasks
       ansible.builtin.include_tasks: tasks/common_upgrade_tasks.yml
 
