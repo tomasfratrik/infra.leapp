@@ -123,9 +123,9 @@ rlJournalStart
         # done
         lsrInstallAnsible
         infra_leapp_path="infra.leapp"
-        #rlRun "git clone -q https://github.com/redhat-cop/infra.leapp.git  --depth 1"
-        rlRun "mkdir -p ~/.ansible/collections/ansible_collections/infra/leapp"
-        rlRun "cp -r ../../* ~/.ansible/collections/ansible_collections/infra/leapp/"
+        rlRun "git clone -q https://github.com/redhat-cop/infra.leapp.git  --depth 1"
+        # rlRun "mkdir -p ~/.ansible/collections/ansible_collections/infra/leapp"
+        # rlRun "cp -r ../../* ~/.ansible/collections/ansible_collections/infra/leapp/"
         if [ -n "$SR_PR_NUM" ]; then
             # git on EL7 doesn't support -C option
             pushd "$infra_leapp_path" || exit
