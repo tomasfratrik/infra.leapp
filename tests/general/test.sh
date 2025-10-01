@@ -121,7 +121,8 @@ rlJournalStart
         #         rlDie "This required variable is unset: $required_var "
         #     fi
         # done
-        lsrInstallAnsible
+        rolesInstallAnsible "$SR_ANSIBLE_VER"
+        #lsrInstallAnsible
         infra_leapp_path="infra.leapp"
         #rlRun "git clone -q https://github.com/redhat-cop/infra.leapp.git  --depth 1"
         rlRun "mkdir -p ~/.ansible/collections/ansible_collections/infra/leapp"
@@ -138,6 +139,7 @@ rlJournalStart
         fi
         # mkdir -p ~/.ansible/collections/ansible_collections/infra
         # cp -r "$infra_leapp_path" ~/.ansible/collections/ansible_collections/infra/leapp
+
         rlRun "ansible-galaxy collection install -r ../../meta/collection-requirements.yml"
 
         # if [ "${SR_ANSIBLE_VER:-}" = 2.9 ]; then
