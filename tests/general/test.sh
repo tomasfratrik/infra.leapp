@@ -114,6 +114,7 @@ echo "~~~ Environment Variables Definition - END"
 rlJournalStart
     rlPhaseStartSetup
         rlRun "rlImport upstream_library"
+        rlRun "rlImport utils"
         # lsrLabBosRepoWorkaround
 
         # for required_var in "${SR_REQUIRED_VARS[@]}"; do

@@ -2,13 +2,32 @@
 # vim: dict+=/usr/share/beakerlib/dictionary.vim cpt=.,w,b,u,t,i,k
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-#   This is a copy of some function of existing library:
-#
 #   lib.sh of /CoreOS/rhel-system-roles/Library/basic
 #   Description: Basic functions for rhel-system-roles testing
 #   Author: David Jez <djez@redhat.com>
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+#   Copyright (c) 2020 Red Hat, Inc.
+#
+#   This program is free software: you can redistribute it and/or
+#   modify it under the terms of the GNU General Public License as
+#   published by the Free Software Foundation, either version 2 of
+#   the License, or (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be
+#   useful, but WITHOUT ANY WARRANTY; without even the implied
+#   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+#   PURPOSE.  See the GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program. If not, see http://www.gnu.org/licenses/.
+#
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#   library-prefix = rolesBasic
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
 
 
 
@@ -77,3 +96,19 @@ priority=1" > /etc/yum.repos.d/lsr-test-ansible.repo
     SR_ANSIBLE_VER="$(rolesGetAnsibleVersion)"
 }
 
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#   Verification
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+#   This is a verification callback which will be called by
+#   rlImport after sourcing the library to make sure everything is
+#   all right. It makes sense to perform a basic sanity test and
+#   check that all required packages are installed. The function
+#   should return 0 only when the library is ready to serve.
+#
+#   This library does not do anything, it is only a list of functions, so simply returning 0
+rolesBasicLibraryLoaded() {
+    rlLog "Library loaded!"
+    return 0
+}
