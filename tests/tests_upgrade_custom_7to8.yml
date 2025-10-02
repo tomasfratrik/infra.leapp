@@ -6,6 +6,12 @@
   vars:
     leapp_upgrade_type: custom
     leapp_upgrade_opts: "--no-rhsm"
+    local_repos_pre_leapp:
+      - name: rhel-7-server-extras-rpms
+        description: RHEL 7 Server Extras
+        baseurl: "https://download.eng.brq.redhat.com/rhel-7/nightly/EXTRAS-7/latest-EXTRAS-7.9-RHEL-7/compose/Server/x86_64/os/"
+        file: rhel7_extras
+        state: present
     local_repos_leapp:
       - name: rhel-8-for-x86_64-baseos-rpms
         description: BaseOS for x86_64
