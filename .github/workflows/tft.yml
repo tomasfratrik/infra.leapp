@@ -101,7 +101,7 @@ jobs:
                 supported_platforms+=" RHEL-8.10.0-Nightly"
               fi
               if [ "$ver" == "9" ]; then
-                supported_platforms+=" rhel-9.8.0-Latest"
+                supported_platforms+=" RHEL-9.8.0-Nightly"
               fi
             fi
           done
@@ -121,7 +121,7 @@ jobs:
             ansible_version: 2.16
           - platform: rhel-7.9-ZStream
             ansible_version: 2.16
-          - platform: rhel-9.8.0-Latest
+          - platform: RHEL-9.8.0-Nightly
             ansible_version: 2.16
     runs-on: ubuntu-latest
     env:
